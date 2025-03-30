@@ -1,17 +1,11 @@
 ﻿[
   {
-    BeerName: 2004 SYMPOSIUM ALE,
-    BrewerName: STONE,
-    BrewmasterName: Raegan Macejkovic
+    BeerName: 2004 SYMPOSIUM ALE
   },
   {
-    BeerName: 36,15,
-    BrewerName: FISCHER - ADELSHOFFEN,
-    BrewmasterName: Kelli Fisher
+    BeerName: 36,15
   },
   {
-    BeerName: ABBATIALE,
-    BrewerName: ST. AMAND,
-    BrewmasterName: Felton Lakin
+    BeerName: ABBATIALE
   }
 ]

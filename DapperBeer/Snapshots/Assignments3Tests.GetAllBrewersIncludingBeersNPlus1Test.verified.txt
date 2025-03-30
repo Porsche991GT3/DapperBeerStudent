@@ -8,16 +8,13 @@
         BeerId: 791,
         Name: COLLEGE ALE,
         Type: ALE, ENGLIS,
-        Style: OLD/WINTER,
-        Alcohol: 7.4,
-        BrewerId: 678
+        Alcohol: 7.4
       },
       {
         BeerId: 379,
         Name: MUST,
         Type: STRONG LAGE,
-        Alcohol: 8.2,
-        BrewerId: 678
+        Alcohol: 8.2
       }
     ]
   },
@@ -30,17 +27,13 @@
         BeerId: 743,
         Name: ALPHA KING,
         Type: ALE, ENGLIS,
-        Style: INDIA/AMERICAN PALE,
-        Alcohol: 5.8,
-        BrewerId: 679
+        Alcohol: 5.8
       },
       {
         BeerId: 1112,
         Name: RABBID RABBIT,
         Type: ALE, BELGIA,
-        Style: SAISON,
-        Alcohol: 7.2,
-        BrewerId: 679
+        Alcohol: 7.2
       }
     ]
   },
@@ -53,9 +46,7 @@
         BeerId: 1512,
         Name: 3 FONTEINEN OUDE GEUZE,
         Type: LAMBIC,
-        Style: GUEUZE,
-        Alcohol: 5.0,
-        BrewerId: 680
+        Alcohol: 5.0
       }
     ]
   }

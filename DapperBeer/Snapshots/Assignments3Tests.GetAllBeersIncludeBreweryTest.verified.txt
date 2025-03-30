@@ -2,40 +2,22 @@
   {
     BeerId: 1553,
     Name: 'T SCHOENLAPPERTJE,
-    Type: SPECIAL,
-    Style: CHERRY(CILIEGE),
-    Alcohol: 6.5,
-    BrewerId: 1201,
     Brewer: {
-      BrewerId: 1201,
-      Name: SCHELDEBROUWERIJ,
-      Country: NED
+      Name: SCHELDEBROUWERIJ
     }
   },
   {
     BeerId: 842,
     Name: 1066,
-    Type: ALE, ENGLIS,
-    Style: STRONG BITTER/PALE,
-    Alcohol: 6.0,
-    BrewerId: 956,
     Brewer: {
-      BrewerId: 956,
-      Name: HAMPSHIRE,
-      Country: ENG
+      Name: SCHELDEBROUWERIJ
     }
   },
   {
     BeerId: 19,
     Name: 110 JUBILAEUMS PILSNER,
-    Type: LAGER,PALE,
-    Style: PILSEN,
-    Alcohol: 4.6,
-    BrewerId: 962,
     Brewer: {
-      BrewerId: 962,
-      Name: HARBOE,
-      Country: DEN
+      Name: SCHELDEBROUWERIJ
     }
   }
 ]

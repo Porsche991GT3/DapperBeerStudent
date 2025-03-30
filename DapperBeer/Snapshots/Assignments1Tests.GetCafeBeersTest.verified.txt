@@ -1,14 +1,5 @@
 ﻿[
-  {
-    CafeName: AFFOURTIT,
-    Beers: ABBAYE DE ROCS NOEL
-  },
-  {
-    CafeName: AFFOURTIT,
-    Beers: BLONDINE
-  },
-  {
-    CafeName: AFFOURTIT,
-    Beers: OLD JOCK
-  }
+  {},
+  {},
+  {}
 ]

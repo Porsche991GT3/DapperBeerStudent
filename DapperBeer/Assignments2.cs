@@ -1,7 +1,9 @@
 using System.Data;
+using BenchmarkDotNet.Toolchains.Roslyn;
 using Dapper;
 using DapperBeer.DTO;
 using DapperBeer.Model;
+using FluentAssertions.Equivalency.Tracing;
 using SqlKata;
 
 namespace DapperBeer;
@@ -29,7 +31,13 @@ public class Assignments2
     // !!!DOE DIT NOOIT MEER SVP!!!!
     public static List<string> GetBeersByCountryWithSqlInjection(string country)
     {
-        throw new NotImplementedException();
+        string sql = $@" SELECT beer.Name FROM beer
+            JOIN brewer ON brewer.brewerId = beer.brewerId
+            WHERE Country = '{country}';";
+        
+        var connection = DbHelper.GetConnection();
+        return connection.Query<string>(sql).ToList();
+
     }
     
     // 2.2 Question
@@ -42,17 +50,32 @@ public class Assignments2
     // Dit betekent dus dat country null kan zijn.
     public static List<string> GetAllBeersByCountry(string? country)
     {
-        throw new NotImplementedException();
+        string sql = @" SELECT beer.Name
+            FROM beer
+            JOIN brewer ON brewer.brewerId = beer.brewerId
+            WHERE @Country IS NULL OR country = @Country
+            ORDER BY Name;";
+        
+        using var connection = DbHelper.GetConnection();
+        return connection.Query<string>(sql, new { Country = country }).ToList();
     }
     
     // 2.3 Question
     // Nu doen we hetzelfde als in de vorige opdracht GetAllBeersByCountry, echter voegen we een extra parameter toe,
     // het minimal alcoholpercentage.
     // Ook het minAlcohol kan leeg gelaten worden (decimal? minAlcohol).
-    // Gebruikt <= (kleiner of gelijk aan) voor de vergelijking van het minAlcohol.
+    // Gebruik <= (kleiner of gelijk aan) voor de vergelijking van het minAlcohol.
     public static List<string> GetAllBeersByCountryAndMinAlcohol(string? country = null, decimal? minAlcohol = null)
     {
-        throw new NotImplementedException();
+        string sql = @" SELECT beer.Name
+            FROM beer
+            JOIN brewer ON beer.BrewerId = brewer.BrewerId
+            WHERE (@Country IS NULL OR country = @Country)
+            AND (@MinAlcohol IS NULL OR Alcohol >= @MinAlcohol)
+            ORDER BY beer.Name;";
+
+        using var connection = DbHelper.GetConnection();
+        return connection.Query<string>(sql, new { Country = country, MinAlcohol = minAlcohol }).ToList();
     }
     
     // 2.4 Question
@@ -90,17 +113,33 @@ public class Assignments2
         string? country = null, decimal? minAlcohol = null, string orderBy = "beer.Name")
     {
         using IDbConnection connection = DbHelper.GetConnection();
-        string sql = $"""
-                      SELECT beer.Name
-                      FROM Beer beer 
-                           JOIN Brewer brewer ON beer.BrewerId = brewer.BrewerId 
-                      /**where**/
-                      /**orderby**/
-                      """;
+        
+        string sql = """
+                     SELECT beer.Name
+                     FROM Beer beer 
+                     JOIN Brewer brewer ON beer.BrewerId = brewer.BrewerId
+                     /**where**/
+                     /**orderby**/
+                     """;
         
         SqlBuilder builder = new SqlBuilder();
         
-        throw new NotImplementedException();
+        var template = builder.AddTemplate(sql);
+        
+        if (country != null)
+        {
+            builder.Where("brewer.Country = @Country", new { Country = country });
+        }
+
+        if (minAlcohol.HasValue)
+        {
+            builder.Where("beer.Alcohol >= @MinAlcohol", new { MinAlcohol = minAlcohol });
+        }
+        
+        builder.OrderBy(orderBy);
+        
+        var result = connection.Query<string>(template.RawSql, template.Parameters).ToList();
+        return result;
     }
 
     // 2.5 Question
@@ -112,7 +151,16 @@ public class Assignments2
     // Gebruik de klasse BrewerBeerBrewmaster om de resultaten in op te slaan. (directory DTO).
     public static List<BrewerBeerBrewmaster> GetAllBeerNamesWithBreweryAndBrewmaster()
     {
-        throw new NotImplementedException();
+        string sql = @" SELECT beer.Name AS BeerName, brewer.Name AS BreweryName, brewmaster.Name
+        FROM Beer beer
+        JOIN Brewer brewer ON beer.BrewerId = brewer.BrewerId
+        JOIN brewmaster on brewmaster.BrewerId = beer.BrewerId
+        WHERE brewmaster.Name IS NOT NULL
+        ORDER BY beer.Name;";
+
+        using var connection = DbHelper.GetConnection();
+        var result = connection.Query<BrewerBeerBrewmaster>(sql).ToList();
+        return result;
     }
     
     // 2.6 Question
@@ -139,10 +187,11 @@ public class Assignments2
     public static List<Beer> GetBeersByCountryAndType(BeerFilter filter)
     {
         using IDbConnection connection = DbHelper.GetConnection();
+        
         string sql = $"""
                       SELECT beer.BeerId, beer.Name, beer.Type, beer.Style, beer.Alcohol, beer.BrewerId
                       FROM Beer beer 
-                           JOIN Brewer brewer ON beer.BrewerId = brewer.BrewerId
+                      JOIN Brewer brewer ON beer.BrewerId = brewer.BrewerId
                       /**where**/
                       /**orderby**/
                       LIMIT @PageSize OFFSET @Offset
@@ -150,6 +199,29 @@ public class Assignments2
         
         SqlBuilder builder = new SqlBuilder();
 
-        throw new NotImplementedException();
+        var selector = builder.AddTemplate(sql);
+
+        if (!string.IsNullOrWhiteSpace(filter.Country))
+        {
+            builder.Where("brewer.Country = @Country", new { Country = filter.Country });
+        }
+
+        if (!string.IsNullOrWhiteSpace(filter.Type))
+        {
+            builder.Where("beer.Type = @Type", new { Type = filter.Type });
+        }
+        
+        builder.OrderBy(filter.OrderBy);
+
+        var result = connection.Query<Beer>(selector.RawSql, new
+        {
+            PageSize = filter.PageSize,
+            Offset = filter.Offset,
+            Country = filter.Country,
+            Type = filter.Type,
+            Orderby = filter.OrderBy
+        }).ToList();
+        
+        return result;
     }
 }
